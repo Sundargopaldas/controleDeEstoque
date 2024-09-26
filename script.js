@@ -1,77 +1,85 @@
 document.addEventListener("DOMContentLoaded", function() {
-  const produtoInput = document.getElementById('produto');
-  const entradaInput = document.getElementById('entrada');
-  const saidaInput = document.getElementById('saida');
-  const estoqueInput = document.getElementById('estoque');
-  const clienteInput = document.getElementById('cliente');
-  const enviarBtn = document.getElementById('enviar');
-  const tabelaEstoque = document.getElementById('tabelaEstoque').getElementsByTagName('tbody')[0];
+    const produtoInput = document.getElementById('produto');
+    const entradaInput = document.getElementById('entrada');
+    const saidaInput = document.getElementById('saida');
+    const estoqueInput = document.getElementById('estoque');
+    const clienteInput = document.getElementById('cliente');
+    const enviarBtn = document.getElementById('enviar');
+    const tabelaEstoque = document.getElementById('tabelaEstoque').getElementsByTagName('tbody')[0];
 
-  // Carrega os dados salvos no localStorage
-  const registros = JSON.parse(localStorage.getItem('estoque')) || [];
+    let registros = JSON.parse(localStorage.getItem('estoque')) || [];
 
-  // Atualiza a tabela com os dados salvos
-  registros.forEach(registro => adicionarLinhaTabela(registro));
+    function atualizarTabela() {
+        tabelaEstoque.innerHTML = '';
+        registros.forEach((registro, index) => adicionarLinhaTabela(registro, index));
+    }
 
-  // Calcula o estoque automaticamente quando entrada e saída são preenchidos
-  entradaInput.addEventListener('input', atualizarEstoque);
-  saidaInput.addEventListener('input', atualizarEstoque);
+    function atualizarEstoque() {
+        const entrada = parseInt(entradaInput.value) || 0;
+        const saida = parseInt(saidaInput.value) || 0;
+        estoqueInput.value = entrada - saida;
+    }
 
-  function atualizarEstoque() {
-    const entrada = parseInt(entradaInput.value) || 0;
-    const saida = parseInt(saidaInput.value) || 0;
-    estoqueInput.value = entrada - saida;
-  }
+    function validarFormulario() {
+        return produtoInput.value.trim() !== '' && 
+               entradaInput.value.trim() !== '' && 
+               saidaInput.value.trim() !== '' && 
+               clienteInput.value.trim() !== '';
+    }
 
-  // Adiciona o registro na tabela e salva no localStorage
-  enviarBtn.addEventListener('click', function() {
-    const produto = produtoInput.value;
-    const entrada = parseInt(entradaInput.value) || 0;
-    const saida = parseInt(saidaInput.value) || 0;
-    const estoque = entrada - saida;
-    const cliente = clienteInput.value;
-    const data = new Date().toLocaleDateString();
+    function limparFormulario() {
+        produtoInput.value = '';
+        entradaInput.value = '';
+        saidaInput.value = '';
+        estoqueInput.value = '';
+        clienteInput.value = '';
+    }
 
-    const registro = { produto, entrada, saida, estoque, cliente, data };
+    entradaInput.addEventListener('input', atualizarEstoque);
+    saidaInput.addEventListener('input', atualizarEstoque);
 
-    // Salva no localStorage
-    registros.push(registro);
-    localStorage.setItem('estoque', JSON.stringify(registros));
+    enviarBtn.addEventListener('click', function() {
+        if (!validarFormulario()) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
 
-    // Adiciona na tabela
-    adicionarLinhaTabela(registro);
+        const registro = {
+            produto: produtoInput.value,
+            entrada: parseInt(entradaInput.value),
+            saida: parseInt(saidaInput.value),
+            estoque: parseInt(estoqueInput.value),
+            cliente: clienteInput.value,
+            data: new Date().toLocaleDateString()
+        };
 
-    // Limpa os campos
-    produtoInput.value = '';
-    entradaInput.value = '';
-    saidaInput.value = '';
-    estoqueInput.value = '';
-    clienteInput.value = '';
-  });
-
-  function adicionarLinhaTabela(registro) {
-    const novaLinha = tabelaEstoque.insertRow();
-
-    novaLinha.insertCell(0).textContent = registro.produto;
-    novaLinha.insertCell(1).textContent = registro.entrada;
-    novaLinha.insertCell(2).textContent = registro.saida;
-    novaLinha.insertCell(3).textContent = registro.estoque;
-    novaLinha.insertCell(4).textContent = registro.cliente;
-    novaLinha.insertCell(5).textContent = registro.data;
-
-    const acaoCell = novaLinha.insertCell(6);
-    const removerBtn = document.createElement('button');
-    removerBtn.textContent = 'Remover';
-    removerBtn.classList.add('remover');
-    removerBtn.addEventListener('click', function() {
-      tabelaEstoque.deleteRow(novaLinha.rowIndex - 1);
-
-      // Atualiza o localStorage
-      const index = registros.indexOf(registro);
-      registros.splice(index, 1);
-      localStorage.setItem('estoque', JSON.stringify(registros));
+        registros.push(registro);
+        localStorage.setItem('estoque', JSON.stringify(registros));
+        
+        adicionarLinhaTabela(registro, registros.length - 1);
+        limparFormulario();
     });
 
-    acaoCell.appendChild(removerBtn);
-  }
+    function adicionarLinhaTabela(registro, index) {
+        const novaLinha = tabelaEstoque.insertRow();
+        novaLinha.innerHTML = `
+            <td class="px-4 py-2">${registro.produto}</td>
+            <td class="px-4 py-2">${registro.entrada}</td>
+            <td class="px-4 py-2">${registro.saida}</td>
+            <td class="px-4 py-2">${registro.estoque}</td>
+            <td class="px-4 py-2">${registro.cliente}</td>
+            <td class="px-4 py-2">${registro.data}</td>
+            <td class="px-4 py-2">
+                <button class="remover">Remover</button>
+            </td>
+        `;
+
+        novaLinha.querySelector('.remover').addEventListener('click', function() {
+            registros.splice(index, 1);
+            localStorage.setItem('estoque', JSON.stringify(registros));
+            atualizarTabela();
+        });
+    }
+
+    atualizarTabela();
 });
