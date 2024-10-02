@@ -1,66 +1,73 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Estoque</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Estoque</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-blue-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-bold text-center mb-6">Controle de Estoque</h1>
-        
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div>
-                    <label for="produto" class="block text-gray-700 text-sm font-bold mb-2">Produto:</label>
-                    <input type="text" id="produto" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-                <div>
-                    <label for="entrada" class="block text-gray-700 text-sm font-bold mb-2">Entrada:</label>
-                    <input type="number" id="entrada" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-                <div>
-                    <label for="saida" class="block text-gray-700 text-sm font-bold mb-2">Saída:</label>
-                    <input type="number" id="saida" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-                <div>
-                    <label for="estoque" class="block text-gray-700 text-sm font-bold mb-2">Estoque:</label>
-                    <input type="number" id="estoque" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
-                </div>
-                <div>
-                    <label for="cliente" class="block text-gray-700 text-sm font-bold mb-2">Cliente:</label>
-                    <input type="text" id="cliente" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-            </div>
-            <div class="mt-6">
-                <button id="enviar" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
-                    Enviar
-                </button>
-            </div>
-        </div>
+<body>
+  <!-- Página de Login -->
+  <div id="login-page">
+    <h2 id="login-title">Criar Conta</h2>
+    <label for="username">Usuário:</label>
+    <input type="text" id="username" placeholder="Digite seu nome de usuário">
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Digite seu email">
 
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
-            <h2 class="text-2xl font-bold mb-4">Registros de Estoque</h2>
-            <div class="overflow-x-auto">
-                <table id="tabelaEstoque" class="w-full">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="px-4 py-2">Produto</th>
-                            <th class="px-4 py-2">Entrada</th>
-                            <th class="px-4 py-2">Saída</th>
-                            <th class="px-4 py-2">Estoque</th>
-                            <th class="px-4 py-2">Cliente</th>
-                            <th class="px-4 py-2">Data</th>
-                            <th class="px-4 py-2">Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
+    <label for="password">Senha:</label>
+    <input type="password" id="password" placeholder="Digite sua senha">
+
+    <button id="submit-btn">Criar Conta</button>
+
+    <p id="login-toggle">Já tem uma conta? <a href="#">Faça login</a></p>
+  </div>
+
+  <!-- Página do Controle de Estoque -->
+  <div id="estoque-page" style="display: none;">
+    <h2>Controle de Estoque</h2>
+
+    <label for="cliente">Cliente:</label>
+    <input type="text" id="cliente">
+    <select id="clienteList">
+      <option value="">Selecione um cliente</option>
+      <option value="Chocolatras">Chocolatras</option>
+      <option value="Chic Brigadeiro">Chic Brigadeiro</option>
+      <option value="Banny Sushi">Banny Suchi</option>
+      <option value="Q pudim">Q pudim</option>
+      <option value="Santo burger">Santo Burger</option>
+    </select>
+
+    <label for="produto">Produto:</label>
+    <input type="text" id="produto">
+
+    <label for="entrada">Entrada:</label>
+    <input type="number" id="entrada">
+
+    <label for="saida">Saída:</label>
+    <input type="number" id="saida">
+
+    
+
+    <button id="adicionar">Adicionar</button>
+
+    <table id="tabelaEstoque">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Produto</th>
+          <th>Entrada</th>
+          <th>Saída</th>
+          <th>Estoque</th>
+          <th>Data</th>
+          <th>Remover</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
