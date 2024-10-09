@@ -1,73 +1,34 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Estoque</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Página de Login -->
-  <div id="login-page">
-    <h2 id="login-title">Criar Conta</h2>
-    <label for="username">Usuário:</label>
-    <input type="text" id="username" placeholder="Digite seu nome de usuário">
     
-    <label for="email">Email:</label>
-    <input type="email" id="email" placeholder="Digite seu email">
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Usuário:</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+        <p>Não tem uma conta? <a href="#" id="createAccountLink">Criar cadastro</a></p>
+    </div>
 
-    <label for="password">Senha:</label>
-    <input type="password" id="password" placeholder="Digite sua senha">
-
-    <button id="submit-btn">Criar Conta</button>
-
-    <p id="login-toggle">Já tem uma conta? <a href="#">Faça login</a></p>
-  </div>
-
-  <!-- Página do Controle de Estoque -->
-  <div id="estoque-page" style="display: none;">
-    <h2>Controle de Estoque</h2>
-
-    <label for="cliente">Cliente:</label>
-    <input type="text" id="cliente">
-    <select id="clienteList">
-      <option value="">Selecione um cliente</option>
-      <option value="Chocolatras">Chocolatras</option>
-      <option value="Chic Brigadeiro">Chic Brigadeiro</option>
-      <option value="Banny Sushi">Banny Suchi</option>
-      <option value="Q pudim">Q pudim</option>
-      <option value="Santo burger">Santo Burger</option>
-    </select>
-
-    <label for="produto">Produto:</label>
-    <input type="text" id="produto">
-
-    <label for="entrada">Entrada:</label>
-    <input type="number" id="entrada">
-
-    <label for="saida">Saída:</label>
-    <input type="number" id="saida">
-
-    
-
-    <button id="adicionar">Adicionar</button>
-
-    <table id="tabelaEstoque">
-      <thead>
-        <tr>
-          <th>Cliente</th>
-          <th>Produto</th>
-          <th>Entrada</th>
-          <th>Saída</th>
-          <th>Estoque</th>
-          <th>Data</th>
-          <th>Remover</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
