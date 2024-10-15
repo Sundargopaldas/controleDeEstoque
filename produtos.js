@@ -1,129 +1,149 @@
-// Função para carregar produtos do localStorage
-function carregarProdutos() {
-    return JSON.parse(localStorage.getItem('produtos')) || [];
-}
 
-// Função para salvar produtos no localStorage
-function salvarProdutos(produtos) {
-    localStorage.setItem('produtos', JSON.stringify(produtos));
-}
+  // produtos.js
 
-// Função para carregar histórico de produtos
-function carregarHistorico() {
-    return JSON.parse(localStorage.getItem('historicoProdutos')) || [];
-}
-
-// Função para salvar histórico de produtos
-function salvarHistorico(historico) {
-    localStorage.setItem('historicoProdutos', JSON.stringify(historico));
-}
-
-// Função para calcular o estoque e determinar o status
-function calcularEstoqueEStatus(entrada, saida) {
-    const estoque = entrada - saida;
-    const status = estoque <= 200 ? "Baixo" : "Alto";
-    return { estoque, status };
-}
-
-// Função para adicionar um produto à tabela
-function adicionarProdutoNaTabela(produto, index) {
-    const tabela = document.getElementById("produtosTable").getElementsByTagName('tbody')[0];
-    const novaLinha = tabela.insertRow();
+// Função para pré-popular a lista de produtos
+function prePopularProdutos() {
+    const produtosIniciais = ['', '', ''];
+    let produtosUnicos = JSON.parse(localStorage.getItem('produtos_unicos')) || [];
     
-    ['cliente', 'entrada', 'saida', 'estoque', 'status'].forEach(key => {
-        const celula = novaLinha.insertCell();
-        celula.textContent = produto[key];
+    produtosIniciais.forEach(produto => {
+        if (!produtosUnicos.includes(produto)) {
+            produtosUnicos.push(produto);
+        }
     });
-
-    const celulaBotao = novaLinha.insertCell();
-    const botaoDeletar = document.createElement('button');
-    botaoDeletar.textContent = 'Deletar';
-    botaoDeletar.className = 'btn-deletar';
-    botaoDeletar.onclick = () => deletarProduto(index);
-    celulaBotao.appendChild(botaoDeletar);
-}
-
-// Função para atualizar a tabela com todos os produtos
-function atualizarTabelaProdutos() {
-    const tabela = document.getElementById("produtosTable").getElementsByTagName('tbody')[0];
-    tabela.innerHTML = '';
     
-    const produtos = carregarProdutos();
-    produtos.forEach((produto, index) => adicionarProdutoNaTabela(produto, index));
+    localStorage.setItem('produtos_unicos', JSON.stringify(produtosUnicos));
 }
 
-// Função para lidar com o envio do formulário
-document.getElementById("produtoForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+// Função para carregar os clientes no select
+function carregarClientes() {
+    const selectCliente = document.getElementById('cliente');
+    const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
 
-    const cliente = document.getElementById("cliente").value;
-    const entrada = parseInt(document.getElementById("entrada").value);
-    const saida = parseInt(document.getElementById("saida").value);
+    clientes.forEach(cliente => {
+        const option = document.createElement('option');
+        option.value = cliente.id;
+        option.textContent = cliente.nome;
+        selectCliente.appendChild(option);
+    });
+}
 
-    const { estoque, status } = calcularEstoqueEStatus(entrada, saida);
+// Função para carregar os produtos no select
+function carregarProdutos() {
+    const selectProduto = document.getElementById('produto');
+    const produtos = JSON.parse(localStorage.getItem('produtos_unicos')) || [];
 
-    const produto = { 
-        cliente, 
-        entrada, 
-        saida, 
-        estoque, 
-        status, 
-        dataRegistro: new Date().toISOString() 
-    };
+    // Limpar opções existentes, mantendo as opções padrão
+    selectProduto.innerHTML = `
+        <option value="novo">Selecione um produto</option>
+        <option value="saco kraft">saco kraft</option>
+        <option value="sacola kraft"> sacola kraft g</option>
+        <option value="cestinho">cestinho</option>
+        <option value="cx p/9 doces">cx p/9 doces</option>
+        <option value="cx p/4 trufas">cx p/4 trufas</option>
+        <option value="cx p/b choc.">cx p/b choc.</option>
+        <option value="sacola p">sacola p</option>
+    `;
 
-    // Adicionar o novo produto à lista e salvar no localStorage
-    const produtos = carregarProdutos();
-    produtos.push(produto);
-    salvarProdutos(produtos);
+    produtos.forEach(produto => {
+        const option = document.createElement('option');
+        option.value = produto;
+        option.textContent = produto;
+        selectProduto.appendChild(option);
+    });
+}
 
-    // Adicionar ao histórico
-    const historico = carregarHistorico();
-    historico.push({ ...produto, acao: 'Adicionado' });
-    salvarHistorico(historico);
+// Função para salvar produtos únicos
+function salvarProdutoUnico(nomeProduto) {
+    let produtosUnicos = JSON.parse(localStorage.getItem('produtos_unicos')) || [];
+    if (!produtosUnicos.includes(nomeProduto)) {
+        produtosUnicos.push(nomeProduto);
+        localStorage.setItem('produtos_unicos', JSON.stringify(produtosUnicos));
+    }
+}
 
-    // Atualizar a tabela
-    atualizarTabelaProdutos();
-
-    // Atualizar os campos de estoque e status no formulário
-    document.getElementById("estoque").value = estoque;
-    document.getElementById("status").value = status;
-
-    // Limpar o formulário após o envio
-    document.getElementById("cliente").value = "";
-    document.getElementById("entrada").value = "";
-    document.getElementById("saida").value = "";
+// Carregar clientes e produtos quando a página for carregada
+window.addEventListener('load', () => {
+    prePopularProdutos();
+    carregarClientes();
+    carregarProdutos();
 });
 
-// Função para calcular o estoque e status em tempo real
-function atualizarEstoqueEStatus() {
-    const entrada = parseInt(document.getElementById("entrada").value) || 0;
-    const saida = parseInt(document.getElementById("saida").value) || 0;
-    const { estoque, status } = calcularEstoqueEStatus(entrada, saida);
+// Mostrar/esconder campo de novo produto
+document.getElementById('produto').addEventListener('change', function() {
+    const novoProdutoDiv = document.querySelector('.novo-produto');
+    if (this.value === 'novo') {
+        novoProdutoDiv.style.display = 'block';
+    } else {
+        novoProdutoDiv.style.display = 'none';
+    }
+});
+
+document.getElementById('productForm').addEventListener('submit', function(e) {
+    e.preventDefault();
     
-    document.getElementById("estoque").value = estoque;
-    document.getElementById("status").value = status;
+    const formData = new FormData(this);
+    const product = {};
+    
+    formData.forEach((value, key) => {
+        if (key !== 'imagem') {
+            product[key] = value;
+        }
+    });
+    
+    // Se for um novo produto, use o nome do novo produto
+    if (product.produto === 'novo') {
+        product.produto = product.novoProduto;
+    }
+    
+    // Calcular o estoque
+    product.estoque = parseInt(product.entrada) - parseInt(product.saida);
+    
+    // Definir o status
+    product.status = product.estoque <= 200 ? 'Baixo' : 'Normal';
+    
+    // Lidar com a imagem
+    const imageFile = formData.get('imagem');
+    if (imageFile.size > 0) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            product.imagem = event.target.result;
+            saveProduct(product);
+        };
+        reader.readAsDataURL(imageFile);
+    } else {
+        saveProduct(product);
+    }
+});
+
+function saveProduct(product) {
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    products.push(product);
+    localStorage.setItem('products', JSON.stringify(products));
+    
+    // Adicionar ao histórico
+    adicionarAoHistorico(product);
+    
+    // Salvar o nome do produto na lista de produtos únicos
+    salvarProdutoUnico(product.produto);
+    
+    alert('Produto cadastrado com sucesso!');
+    window.location.href = 'paginaDadosDeProdutos.html';
+    document.getElementById('productForm').reset();
+
+    // Atualizar a lista de produtos
+    carregarProdutos();
 }
 
-// Adicionar event listeners para atualização em tempo real
-document.getElementById("entrada").addEventListener("input", atualizarEstoqueEStatus);
-document.getElementById("saida").addEventListener("input", atualizarEstoqueEStatus);
-
-// Carregar produtos existentes quando a página é aberta
-document.addEventListener("DOMContentLoaded", atualizarTabelaProdutos);
-
-// Função para deletar um produto
-function deletarProduto(index) {
-    if (confirm('Tem certeza que deseja deletar este produto?')) {
-        let produtos = carregarProdutos();
-        const produtoDeletado = produtos[index];
-        produtos.splice(index, 1);
-        salvarProdutos(produtos);
-
-        // Adicionar ao histórico como deletado
-        const historico = carregarHistorico();
-        historico.push({ ...produtoDeletado, acao: 'Deletado', dataDeleção: new Date().toISOString() });
-        salvarHistorico(historico);
-
-        atualizarTabelaProdutos();
-    }
+// Função para adicionar ao histórico (copiada do HistoricoDeMovimentacao.js)
+function adicionarAoHistorico(produto) {
+    let historico = JSON.parse(localStorage.getItem('historicoMovimentacoes')) || [];
+    
+    const novoItem = {
+        ...produto,
+        data: new Date().toLocaleString()
+    };
+    
+    historico.push(novoItem);
+    localStorage.setItem('historicoMovimentacoes', JSON.stringify(historico));
 }

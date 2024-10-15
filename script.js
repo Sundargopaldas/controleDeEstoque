@@ -14,7 +14,7 @@ document.getElementById("loginForm")?.addEventListener("submit", function (event
     if (storedUser) {
         if (storedUser.password === password && storedUser.username === username) {
             alert("Login bem-sucedido!");
-            window.location.href = "CadastroDeClientes.html";
+            window.location.href = "PaginaDadosClientes.html";
         } else {
             alert("Usuário ou senha incorretos.");
         }
@@ -99,20 +99,19 @@ document.getElementById("clienteForm")?.addEventListener("submit", function(even
 // ... (mantenha o código existente) ...
 
 // Função para exibir os dados dos clientes
-function exibirDadosClientes() {
+// Função para carregar e exibir os dados dos clientes
+function carregarDadosClientes() {
     const dadosClientes = document.getElementById("dadosClientes");
-    if (!dadosClientes) return;
+    const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 
     dadosClientes.innerHTML = "";
-
-    const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 
     clientes.forEach((cliente, index) => {
         const clienteItem = document.createElement("div");
         clienteItem.className = "cliente-item";
 
         const img = document.createElement("img");
-        img.src = cliente.logo || "placeholder.png";
+        img.src = cliente.logo || 'placeholder.png';
         img.alt = `Logo de ${cliente.nome}`;
         clienteItem.appendChild(img);
 
@@ -129,6 +128,9 @@ function exibirDadosClientes() {
 
         dadosClientes.appendChild(clienteItem);
     });
+
+    // Salva os clientes no localStorage
+    localStorage.setItem("clientes", JSON.stringify(clientes));
 }
 
 // Função para deletar um cliente
@@ -138,11 +140,9 @@ function deletarCliente(index) {
     if (confirm("Tem certeza que deseja deletar este cliente?")) {
         clientes.splice(index, 1);
         localStorage.setItem("clientes", JSON.stringify(clientes));
-        exibirDadosClientes(); // Atualiza a exibição após deletar
+        carregarDadosClientes(); // Atualiza a exibição após deletar
     }
 }
 
-// Executa a função ao carregar a página
-document.addEventListener("DOMContentLoaded", exibirDadosClientes);
-
-// ... (mantenha o resto do código existente) ...
+// Carrega os dados dos clientes quando a página é carregada
+document.addEventListener("DOMContentLoaded", carregarDadosClientes);
